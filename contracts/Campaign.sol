@@ -4,9 +4,11 @@ import 'openzeppelin-solidity/contracts/token/ERC20/ERC20Pausable.sol';
 import 'openzeppelin-solidity/contracts/token/ERC20/ERC20Detailed.sol';
 import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 contract Campaign is ERC20Detailed, ERC20Pausable, Ownable {
 
+    using SafeMath for uint;
     constructor(uint minimum, address sender, string memory name, string memory symbol)
     ERC20Detailed(name, symbol, 0) public {
         _owner = sender;
@@ -72,7 +74,7 @@ contract Campaign is ERC20Detailed, ERC20Pausable, Ownable {
     function transferTokens(bytes32 _symbol, address _to, uint256 _amount, uint index) public whenNotPaused {
         Request storage request = requests[index];
         require(!request._complete);
-        require(request._voteCount > (totalContributions / 2));
+        require(request._voteCount > totalContributions.div(2));
         require(_amount >= request._value);
 
         address _contract = tokens[_symbol];
