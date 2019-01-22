@@ -24,4 +24,10 @@ contract CampaignFactory is ERC20Pausable {
         return deployedCampaigns;
     }
 
+    function pauseContract() public onlyOwner {
+        if (!paused()) {
+            pause();
+        }
+    }
+
 }
