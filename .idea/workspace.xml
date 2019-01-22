@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="37ed5899-b7d1-4611-b35f-c2aa490a9376" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/contracts/CampaignFactory.sol" beforeDir="false" afterPath="$PROJECT_DIR$/contracts/CampaignFactory.sol" afterDir="false" />
-    </list>
+    <list default="true" id="37ed5899-b7d1-4611-b35f-c2aa490a9376" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -15,20 +13,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/contracts/CampaignFactory.sol">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="511">
-              <caret line="31" lean-forward="true" selection-start-line="31" selection-end-line="31" />
+            <state relative-caret-position="648">
+              <caret line="24" column="5" lean-forward="true" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="5" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/contracts/Campaign.sol">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="519">
-              <caret line="124" column="5" lean-forward="true" selection-start-line="120" selection-start-column="4" selection-end-line="124" selection-end-column="5" />
+            <state relative-caret-position="1153">
+              <caret line="107" column="25" lean-forward="true" selection-start-line="107" selection-start-column="25" selection-end-line="107" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -189,12 +187,12 @@
       <option name="presentableId" value="Default" />
       <updated>1547707431078</updated>
       <workItem from="1547707432294" duration="1339000" />
-      <workItem from="1548035922717" duration="17218000" />
+      <workItem from="1548035922717" duration="17798000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="18557000" />
+    <option name="totallyTimeSpent" value="19137000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="823" extended-state="0" />
@@ -409,17 +407,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/contracts/Campaign.sol">
+    <entry file="file://$PROJECT_DIR$/contracts/CampaignFactory.sol">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="519">
-          <caret line="124" column="5" lean-forward="true" selection-start-line="120" selection-start-column="4" selection-end-line="124" selection-end-column="5" />
+        <state relative-caret-position="648">
+          <caret line="24" column="5" lean-forward="true" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="5" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/contracts/CampaignFactory.sol">
+    <entry file="file://$PROJECT_DIR$/contracts/Campaign.sol">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="511">
-          <caret line="31" lean-forward="true" selection-start-line="31" selection-end-line="31" />
+        <state relative-caret-position="1153">
+          <caret line="107" column="25" lean-forward="true" selection-start-line="107" selection-start-column="25" selection-end-line="107" selection-end-column="25" />
         </state>
       </provider>
     </entry>
