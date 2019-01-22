@@ -2,6 +2,7 @@ require('babel-register');
 require('babel-polyfill');
 
 module.exports = {
+  contracts_build_directory: "./build",
   compilers: {
     solc: {
       version: '0.5.0'
