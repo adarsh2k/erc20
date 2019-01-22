@@ -5,18 +5,22 @@ import './Campaign.sol';
 
 contract CampaignFactory is ERC20Pausable {
 
-    address[] public deployedCampaigns;
-    address public lastDeployedCampaign;
+    Campaign[] public deployedCampaigns;
+    Campaign public lastDeployedCampaign;
 
     constructor() public {}
 
-    function deployCampaigns(uint minimum, string name, string symbol) public {
-        address token = new Campaign(minimum, msg.sender, name, symbol);
-        deployedCampaigns.push(newCampaign);
+    function deployCampaigns(
+        uint minimum,
+        string memory name,
+        string memory symbol
+    ) public {
+        Campaign token = new Campaign(minimum, msg.sender, name, symbol);
+        deployedCampaigns.push(token);
         lastDeployedCampaign = token;
     }
 
-    function getDeployedCampaigns() public view returns (address[]) {
+    function getDeployedCampaigns() public view returns (Campaign[] memory) {
         return deployedCampaigns;
     }
 

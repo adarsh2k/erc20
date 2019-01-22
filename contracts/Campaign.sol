@@ -5,11 +5,11 @@ import 'openzeppelin-solidity/contracts/token/ERC20/ERC20Detailed.sol';
 import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
-contract Campaign is ERC20Detailed, ERC20Pausable, Ownable, ERC20 {
+contract Campaign is ERC20Detailed, ERC20Pausable, Ownable {
 
-    constructor(uint minimum, address sender, string name, string symbol)
+    constructor(uint minimum, address sender, string memory name, string memory symbol)
     ERC20Detailed(name, symbol, 0) public {
-        owner = sender;
+        _owner = sender;
         minimumContribution = minimum;
     }
 
@@ -24,26 +24,34 @@ contract Campaign is ERC20Detailed, ERC20Pausable, Ownable, ERC20 {
         mapping(address => bool) _voters;
     }
 
+    struct TransferStat {
+        address _contract;
+        address _to;
+        uint _amount;
+        bool _failed;
+    }
+
+    mapping(bytes32 => address) private tokens;
     Request[] public requests;
-    address public owner;
+    address public _owner;
     uint public minimumContribution;
     mapping(address => bool) public contributors;
     uint public totalContributions;
+    TransferStat[] public transactions;
 
-    event ContributionSuccessful(address indexed from_, address indexed to_, uint256 amount_);
+    event ContributionSuccessful(address indexed _from, address indexed _to, uint256 _amount);
 
-    event ContributionFailed(address indexed from_, address indexed to_, uint256 amount_);
+    event ContributionFailed(address indexed _from, address indexed _to, uint256 _amount);
 
-    function contribute(bytes32 symbol_, address address_) public onlyOwner returns (bool) {
-        tokens[symbol_] = address_;
+    function contribute(bytes32 _symbol, address _address) public onlyOwner returns (bool) {
+        tokens[_symbol] = _address;
         contributors[msg.sender] = true;
         totalContributions++;
         return true;
     }
 
-    function removeToken(bytes32 symbol_) public onlyOwner returns (bool) {
-        require(tokens[symbol_] != 0x0);
-        delete (tokens[symbol_]);
+    function removeToken(bytes32 _symbol) public onlyOwner returns (bool) {
+        delete (tokens[_symbol]);
         return true;
     }
 
@@ -54,60 +62,58 @@ contract Campaign is ERC20Detailed, ERC20Pausable, Ownable, ERC20 {
 
     function approveRequest(uint index) public ifContributorExists {
         Request storage request = requests[index];
-        require(!request.voters[msg.sender]);
-        request.voters[msg.sender] = true;
-        request.voteCount++;
+        require(!request._voters[msg.sender]);
+        request._voters[msg.sender] = true;
+        request._voteCount++;
     }
 
-    function() public payable {}
+    function() external payable {}
 
-    function transferTokens(bytes32 symbol_, address to_, uint256 amount_) public whenNotPaused {
+    function transferTokens(bytes32 _symbol, address _to, uint256 _amount, uint index) public whenNotPaused {
         Request storage request = requests[index];
-        require(!request.complete);
-        require(request.voteCount > (totalContributions / 2));
-        require(tokens[symbol_] != 0x0);
-        require(amount_ >= request.value);
+        require(!request._complete);
+        require(request._voteCount > (totalContributions / 2));
+        require(_amount >= request._value);
 
-        address contract_ = tokens[symbol_];
-        address from_ = msg.sender;
+        address _contract = tokens[_symbol];
+        address _from = msg.sender;
 
-        ERC20Interface = ERC20(contract_);
+        ERC20Interface = ERC20(_contract);
 
         uint256 transactionId = transactions.push(
-            Transfer({
-            contract_ : contract_,
-            to_ : to_,
-            amount_ : amount_,
-            failed_ : true
+            TransferStat({
+            _contract : _contract,
+            _to : _to,
+            _amount : _amount,
+            _failed : true
             })
         );
-        transactionIndexesToSender[from_].push(transactionId - 1);
 
-        if (amount_ > ERC20Interface.allowance(from_, address(this))) {
-            emit TransferFailed(from_, to_, amount_);
+        if (_amount > ERC20Interface.allowance(_from, address(this))) {
+            emit ContributionSuccessful(_from, _to, _amount);
             revert();
         }
-        ERC20Interface.transferFrom(from_, to_, amount_);
+        ERC20Interface.transferFrom(_from, _to, _amount);
 
-        transactions[transactionId - 1].failed_ = false;
+        transactions[transactionId - 1]._failed = false;
 
-        emit TransferSuccessful(from_, to_, amount_);
+        emit ContributionSuccessful(_from, _to, _amount);
 
-        request.complete = true;
+        request._complete = true;
     }
 
     function createRequest(
-        string description,
+        string memory description,
         uint value,
         address recipient
     ) public onlyOwner {
 
         Request memory newRequest = Request({
-            description : description,
-            value : value,
-            recipient : recipient,
-            complete : false,
-            voteCount : 0
+            _description : description,
+            _value : value,
+            _recipient : recipient,
+            _complete : false,
+            _voteCount : 0
             });
         requests.push(newRequest);
     }
