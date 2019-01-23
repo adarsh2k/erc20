@@ -1,9 +1,9 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.4.24;
 
-import 'openzeppelin-solidity/contracts/token/ERC20/ERC20Pausable.sol';
+import 'openzeppelin-solidity/contracts/token/ERC20/PausableToken.sol';
 import './Campaign.sol';
 
-contract CampaignFactory is ERC20Pausable, Ownable {
+contract CampaignFactory is PausableToken, Ownable {
 
     Campaign[] public deployedCampaigns;
     Campaign public lastDeployedCampaign;
@@ -24,7 +24,7 @@ contract CampaignFactory is ERC20Pausable, Ownable {
         return deployedCampaigns;
     }
 
-    function pauseContract() public onlyOwner {
+    function pause() public onlyOwner {
         if (!paused()) {
             pause();
         }

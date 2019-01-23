@@ -14,7 +14,6 @@ contract VestingAccount is TokenVesting
         vestingModel = VestingModel(_schedule_address);
     }
 
-
     function vestedAmount(ERC20Basic token) public view returns (uint256) {
         uint256 currentBalance = token.balanceOf(this);
         uint256 totalBalance = currentBalance.add(released[token]);

@@ -1,16 +1,16 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.4.24;
 
-import 'openzeppelin-solidity/contracts/token/ERC20/ERC20Pausable.sol';
-import 'openzeppelin-solidity/contracts/token/ERC20/ERC20Detailed.sol';
+import 'openzeppelin-solidity/contracts/token/ERC20/PausableToken.sol';
+import 'openzeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol';
 import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-contract Campaign is ERC20Detailed, ERC20Pausable, Ownable {
+contract Campaign is DetailedERC20, PausableToken, Ownable {
 
     using SafeMath for uint;
     constructor(uint minimum, address sender, string memory name, string memory symbol)
-    ERC20Detailed(name, symbol, 0) public {
+    DetailedERC20(name, symbol, 0) public {
         _owner = sender;
         minimumContribution = minimum;
     }
@@ -120,7 +120,7 @@ contract Campaign is ERC20Detailed, ERC20Pausable, Ownable {
         requests.push(newRequest);
     }
 
-    function pauseContract() public onlyOwner {
+    function pause() public onlyOwner {
         if (!paused()) {
             pause();
         }
