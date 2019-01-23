@@ -1,12 +1,21 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.4.24;
 
-import 'openzeppelin-solidity/contracts/token/ERC20/ERC20Pausable.sol';
-import './Campaign.sol';
+import 'openzeppelin-solidity/contracts/token/ERC20/PausableToken.sol';
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-contract CampaignFactory is ERC20Pausable, Ownable {
+import { Campaign } from './Campaign.sol';
+import { VestingAccount } from './token-vesting/VestingAccount.sol';
+
+contract CampaignFactory is PausableToken, Ownable {
+
+    using SafeMath for uint256;
 
     Campaign[] public deployedCampaigns;
     Campaign public lastDeployedCampaign;
+    VestingAccount vestingAccount;
+    uint256  _start = block.timestamp;
+    uint256 _cliff;
+    uint256 _duration;
 
     constructor() public {}
 
@@ -15,7 +24,10 @@ contract CampaignFactory is ERC20Pausable, Ownable {
         string memory name,
         string memory symbol
     ) public {
-        Campaign token = new Campaign(minimum, msg.sender, name, symbol);
+         _cliff = _cliff.mul(365 * 24 * 3600 ); // cliff is set to 1 year in seconds
+        _duration = _duration.mul(4 * 365 * 24 * 3600 ); //duration is set to 4 year in seconds
+        vestingAccount = new VestingAccount(token, _start, _cliff, _duration, true);
+        Campaign token = new Campaign(vestingAccount, minimum, msg.sender, name, symbol);
         deployedCampaigns.push(token);
         lastDeployedCampaign = token;
     }
@@ -24,7 +36,7 @@ contract CampaignFactory is ERC20Pausable, Ownable {
         return deployedCampaigns;
     }
 
-    function pauseContract() public onlyOwner {
+    function pause() public onlyOwner {
         if (!paused()) {
             pause();
         }
