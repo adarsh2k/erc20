@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
 import "openzeppelin-solidity/contracts/token/ERC20/TokenVesting.sol";
-import {VestingModel} from "./vesting-model.sol";
+import { VestingModel } from "./VestingModel.sol";
 
 contract VestingAccount is TokenVesting
 {

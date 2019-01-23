@@ -6,13 +6,17 @@ import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
+import { VestingAccount } from './token-vesting/VestingAccount.sol';
+
 contract Campaign is DetailedERC20, PausableToken, Ownable {
 
     using SafeMath for uint;
-    constructor(uint minimum, address sender, string memory name, string memory symbol)
+
+    constructor(VestingAccount account, uint minimum, address sender, string memory name, string memory symbol)
     DetailedERC20(name, symbol, 0) public {
         _owner = sender;
         minimumContribution = minimum;
+        _vestingAccount = account;
     }
 
     ERC20 public ERC20Interface;
@@ -40,6 +44,7 @@ contract Campaign is DetailedERC20, PausableToken, Ownable {
     mapping(address => bool) public contributors;
     uint public totalContributions;
     TransferStat[] public transactions;
+    VestingAccount _vestingAccount;
 
     event ContributionSuccessful(address indexed _from, address indexed _to, uint256 _amount);
 
@@ -51,25 +56,6 @@ contract Campaign is DetailedERC20, PausableToken, Ownable {
         totalContributions++;
         return true;
     }
-
-    function removeToken(bytes32 _symbol) public onlyOwner returns (bool) {
-        delete (tokens[_symbol]);
-        return true;
-    }
-
-    modifier ifContributorExists() {
-        require(contributors[msg.sender]);
-        _;
-    }
-
-    function approveRequest(uint index) public ifContributorExists {
-        Request storage request = requests[index];
-        require(!request._voters[msg.sender]);
-        request._voters[msg.sender] = true;
-        request._voteCount++;
-    }
-
-    function() external payable {}
 
     function transferTokens(bytes32 _symbol, address _to, uint256 _amount, uint index) public whenNotPaused {
         Request storage request = requests[index];
@@ -92,17 +78,40 @@ contract Campaign is DetailedERC20, PausableToken, Ownable {
         );
 
         if (_amount > ERC20Interface.allowance(_from, address(this))) {
-            emit ContributionSuccessful(_from, _to, _amount);
+            emit ContributionFailed(_from, _to, _amount);
             revert();
         }
-        ERC20Interface.transferFrom(_from, _to, _amount);
 
-        transactions[transactionId - 1]._failed = false;
+        if(vestedAmount() < _amount) {
+            ERC20Interface.transferFrom(_from, _to, _amount);
+            transactions[transactionId - 1]._failed = false;
+            emit ContributionSuccessful(_from, _to, _amount);
+            request._complete = true;
+        } else {
+            emit ContributionFailed(_from, _to, _amount);
+            revert();
+        }
 
-        emit ContributionSuccessful(_from, _to, _amount);
-
-        request._complete = true;
     }
+
+    function removeToken(bytes32 _symbol) public onlyOwner returns (bool) {
+        delete (tokens[_symbol]);
+        return true;
+    }
+
+    modifier ifContributorExists() {
+        require(contributors[msg.sender]);
+        _;
+    }
+
+    function approveRequest(uint index) public ifContributorExists {
+        Request storage request = requests[index];
+        require(!request._voters[msg.sender]);
+        request._voters[msg.sender] = true;
+        request._voteCount++;
+    }
+
+    function() external payable {}
 
     function createRequest(
         string memory description,
