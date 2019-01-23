@@ -5,7 +5,7 @@ module.exports = {
   contracts_build_directory: "./build",
   compilers: {
     solc: {
-      version: '0.5.0'
+      version: '0.4.24'
     }
   },
   networks: {

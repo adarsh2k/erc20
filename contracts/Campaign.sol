@@ -8,7 +8,7 @@ import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 import { VestingAccount } from './token-vesting/VestingAccount.sol';
 
-contract Campaign is DetailedERC20, PausableToken, Ownable {
+contract Campaign is DetailedERC20, PausableToken {
 
     using SafeMath for uint;
 
@@ -82,7 +82,7 @@ contract Campaign is DetailedERC20, PausableToken, Ownable {
             revert();
         }
 
-        if(vestedAmount() < _amount) {
+        if(_vestingAccount.vestedAmount() < _amount) {
             ERC20Interface.transferFrom(_from, _to, _amount);
             transactions[transactionId - 1]._failed = false;
             emit ContributionSuccessful(_from, _to, _amount);

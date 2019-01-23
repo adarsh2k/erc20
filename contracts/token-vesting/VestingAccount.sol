@@ -7,11 +7,11 @@ contract VestingAccount is TokenVesting
 {
     VestingModel public vestingModel;
 
-    constructor(address _beneficiary, address _schedule_address, bool _revocable)
+    constructor(address _beneficiary, uint256 _start, uint256 _cliff, uint256 _duration, bool _revocable)
     TokenVesting(_beneficiary, _start, _cliff, _duration, _revocable) public
     {
-        require(_schedule_address != address(0));
-        vestingModel = VestingModel(_schedule_address);
+        require(_beneficiary != address(0));
+        vestingModel = VestingModel(_start, _cliff, _duration);
     }
 
     function vestedAmount(ERC20Basic token) public view returns (uint256) {
